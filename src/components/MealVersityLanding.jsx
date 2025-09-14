@@ -15,6 +15,18 @@ export default function MealVersityLanding() {
   const heroControls = useAnimation();
   const countersRef = useRef(null);
 
+  // Plan selection states
+  const [selectedCategory, setSelectedCategory] = useState('Individual');
+  const [selectedDuration, setSelectedDuration] = useState('Weekly Plan');
+  const [selectedDietType, setSelectedDietType] = useState('');
+  const [selectedMealType, setSelectedMealType] = useState('');
+  const [showDietSelection, setShowDietSelection] = useState(false);
+  const [showMealSelection, setShowMealSelection] = useState(false);
+  const [showPlanCards, setShowPlanCards] = useState(true); // Always show plans on load
+  
+  // Career section states
+  const [selectedDepartment, setSelectedDepartment] = useState('All');
+
   // Stable dark mode toggle handler
   const toggleDarkMode = useCallback(() => {
     setDark(prevDark => !prevDark);
@@ -44,12 +56,316 @@ export default function MealVersityLanding() {
     heroControls.start({ y: [6, -6, 6], transition: { y: { yoyo: Infinity, duration: 6, ease: 'easeInOut' } } });
   }, [heroControls]);
 
-  const plans = [
-    { id: 1, title: 'Daily Meal Plan', desc: 'Balanced breakfast, lunch & dinner — chef-curated.', price: '₹1,749', tag: 'Best value', meals: '28 days' },
-    { id: 2, title: 'Premium Combo', desc: 'Lunch + Dinner — chef specials.', price: '₹3,499', tag: 'Popular', meals: 'Monthly' },
-    { id: 3, title: 'Custom Plan', desc: 'Pick meals, schedule deliveries, swap anytime.', price: 'Custom', tag: 'Flexible', meals: 'Flexible' },
-    { id: 4, title: 'Custom Plan', desc: 'Pick meals, schedule deliveries, swap anytime.', price: 'Custom', tag: 'Flexible', meals: 'Flexible' },
+  // Plan categories
+  const planCategories = [
+    { id: 'Individual', name: 'Individual', icon: '👤' },
+    { id: 'Family Pack', name: 'Family Pack', icon: '👨‍👩‍👧‍👦' },
+    { id: 'Corporate Office', name: 'Corporate Office', icon: '🏢' },
+    { id: 'Migrant Worker', name: 'Migrant Worker', icon: '👷‍♂️' },
+    { id: 'Festival Specials', name: 'Festival Specials', icon: '🎁' },
   ];
+
+  // Diet types
+  const dietTypes = [
+    { id: 'veg', name: 'Veg', icon: '🥬' },
+    { id: 'non-veg', name: 'Non-Veg', icon: '🍖' },
+    { id: 'veg-non-veg', name: 'Veg + Non-Veg', icon: '🍽️' },
+  ];
+
+  // Meal types
+  const mealTypes = [
+    { id: 'lunch', name: 'Lunch', icon: '🍽️' },
+    { id: 'dinner', name: 'Dinner', icon: '🌙' },
+    { id: 'lunch-dinner', name: 'Lunch + Dinner', icon: '🍽️🌙' },
+  ];
+
+  // Plan cards based on selections
+  const getFilteredPlans = () => {
+    const basePlans = [
+      // Individual Plans
+      { 
+        id: 1, 
+        title: 'Daily Meal Plan', 
+        desc: 'Balanced breakfast, lunch & dinner — chef-curated.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,749' : '₹6,999', 
+        tag: 'Most Popular', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 2, 
+        title: 'Premium Combo', 
+        desc: 'Lunch + Dinner — chef specials.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹2,499' : '₹9,999', 
+        tag: 'Popular', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'non-veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 3, 
+        title: 'Custom Plan', 
+        desc: 'Pick meals, schedule deliveries, swap anytime.', 
+        price: 'Custom', 
+        tag: 'Flexible', 
+        meals: 'Flexible',
+        category: 'Individual',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 4, 
+        title: 'Veg Delight', 
+        desc: 'Pure vegetarian meals with fresh local ingredients.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,299' : '₹4,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'veg',
+        mealType: 'lunch',
+        available: true
+      },
+      { 
+        id: 5, 
+        title: 'Non-Veg Special', 
+        desc: 'Premium non-vegetarian meals with quality proteins.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,999' : '₹7,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'non-veg',
+        mealType: 'dinner',
+        available: true
+      },
+      { 
+        id: 6, 
+        title: 'Mixed Cuisine', 
+        desc: 'Best of both worlds - veg and non-veg options.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,599' : '₹5,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch',
+        available: true
+      },
+      { 
+        id: 7, 
+        title: 'Evening Feast', 
+        desc: 'Special dinner plans with gourmet options.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,399' : '₹5,499', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'veg',
+        mealType: 'dinner',
+        available: true
+      },
+      { 
+        id: 8, 
+        title: 'Protein Power', 
+        desc: 'High-protein non-veg meals for fitness enthusiasts.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹2,199' : '₹8,799', 
+        tag: 'Coming Soon', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Individual',
+        dietType: 'non-veg',
+        mealType: 'lunch-dinner',
+        available: false
+      },
+
+      // Family Pack Plans
+      { 
+        id: 9, 
+        title: 'Family Veg Feast', 
+        desc: 'Complete vegetarian meals for the whole family.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹4,999' : '₹19,999', 
+        tag: 'Popular', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Family Pack',
+        dietType: 'veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 10, 
+        title: 'Family Mixed', 
+        desc: 'Variety of veg and non-veg meals for family preferences.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹5,999' : '₹23,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Family Pack',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 11, 
+        title: 'Family Lunch Special', 
+        desc: 'Daily lunch plans for working families.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹3,499' : '₹13,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Family Pack',
+        dietType: 'veg',
+        mealType: 'lunch',
+        available: true
+      },
+      { 
+        id: 12, 
+        title: 'Family Dinner Club', 
+        desc: 'Evening meals for family bonding time.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹3,999' : '₹15,999', 
+        tag: 'Coming Soon', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Family Pack',
+        dietType: 'non-veg',
+        mealType: 'dinner',
+        available: false
+      },
+
+      // Corporate Office Plans
+      { 
+        id: 13, 
+        title: 'Office Lunch Program', 
+        desc: 'Bulk lunch delivery for corporate offices.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹2,999' : '₹11,999', 
+        tag: 'Popular', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Corporate Office',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch',
+        available: true
+      },
+      { 
+        id: 14, 
+        title: 'Executive Dining', 
+        desc: 'Premium meals for corporate executives.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹4,499' : '₹17,999', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Corporate Office',
+        dietType: 'veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 15, 
+        title: 'Team Building Meals', 
+        desc: 'Special group meals for team events.', 
+        price: 'Custom', 
+        tag: 'Coming Soon', 
+        meals: 'Flexible',
+        category: 'Corporate Office',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch-dinner',
+        available: false
+      },
+
+      // Migrant Worker Plans
+      { 
+        id: 16, 
+        title: 'Worker Basic', 
+        desc: 'Affordable nutritious meals for migrant workers.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹799' : '₹2,999', 
+        tag: 'Budget', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Migrant Worker',
+        dietType: 'veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 17, 
+        title: 'Worker Plus', 
+        desc: 'Enhanced meals with better variety and nutrition.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹1,199' : '₹4,799', 
+        tag: '', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Migrant Worker',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 18, 
+        title: 'Worker Dinner', 
+        desc: 'Evening meals for hardworking migrants.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹599' : '₹2,399', 
+        tag: 'Coming Soon', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Migrant Worker',
+        dietType: 'veg',
+        mealType: 'dinner',
+        available: false
+      },
+
+      // Festival Specials
+      { 
+        id: 19, 
+        title: 'Diwali Special', 
+        desc: 'Traditional festive meals for Diwali celebration.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹2,999' : '₹11,999', 
+        tag: 'Limited', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Festival Specials',
+        dietType: 'veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 20, 
+        title: 'Eid Feast', 
+        desc: 'Special non-veg meals for Eid celebrations.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹3,499' : '₹13,999', 
+        tag: 'Limited', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Festival Specials',
+        dietType: 'non-veg',
+        mealType: 'lunch-dinner',
+        available: true
+      },
+      { 
+        id: 21, 
+        title: 'Christmas Special', 
+        desc: 'Festive meals for Christmas celebrations.', 
+        price: selectedDuration === 'Weekly Plan' ? '₹2,799' : '₹11,199', 
+        tag: 'Coming Soon', 
+        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
+        category: 'Festival Specials',
+        dietType: 'veg-non-veg',
+        mealType: 'lunch-dinner',
+        available: false
+      },
+    ];
+
+    const filteredPlans = basePlans.filter(plan => {
+      if (selectedCategory && plan.category !== selectedCategory) return false;
+      if (selectedDietType && plan.dietType !== selectedDietType) return false;
+      if (selectedMealType && plan.mealType !== selectedMealType) return false;
+      return true;
+    });
+
+    // If no specific filters are applied, show 3 default popular plans
+    if (!selectedDietType && !selectedMealType) {
+      const defaultPlans = basePlans.filter(plan => 
+        plan.category === selectedCategory && 
+        (plan.tag === 'Most Popular' || plan.tag === 'Popular' || plan.tag === 'Budget')
+      );
+      return defaultPlans.slice(0, 3);
+    }
+
+    // If filters are applied, return filtered results (up to 3)
+    return filteredPlans.slice(0, 3);
+  };
+
+  const plans = getFilteredPlans();
 
   const team = [
     { id: 1, name: 'Tarik Anowar', role: 'CEO' },
@@ -58,10 +374,182 @@ export default function MealVersityLanding() {
     { id: 4, name: 'Asif Ahmed', role: 'Head Chef' },
   ];
 
+  // Career positions data
+  const careerPositions = [
+    // Creative Team
+    {
+      id: 1,
+      title: 'Graphic Designer',
+      department: 'Creative Team',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-4 years',
+      description: 'Create compelling visual designs for marketing materials, social media, and brand assets.',
+      requirements: ['Adobe Creative Suite', 'UI/UX Design', 'Brand Design', 'Print & Digital Media'],
+      icon: '🎨',
+      color: 'from-pink-500 to-rose-500'
+    },
+    {
+      id: 2,
+      title: 'Video Editor',
+      department: 'Creative Team',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-5 years',
+      description: 'Edit and produce high-quality video content for marketing campaigns and social media.',
+      requirements: ['Adobe Premiere Pro', 'After Effects', 'Video Production', 'Motion Graphics'],
+      icon: '🎬',
+      color: 'from-purple-500 to-indigo-500'
+    },
+    {
+      id: 3,
+      title: 'Motion Graphics / Animation Creator',
+      department: 'Creative Team',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '3-6 years',
+      description: 'Create engaging motion graphics and animations for digital marketing and brand storytelling.',
+      requirements: ['After Effects', 'Cinema 4D/Blender', 'Motion Design', '3D Animation'],
+      icon: '✨',
+      color: 'from-cyan-500 to-blue-500'
+    },
+    {
+      id: 4,
+      title: 'Photographer / Videographer',
+      department: 'Creative Team',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '2-4 years',
+      description: 'Capture stunning food photography and videography for marketing and social media content.',
+      requirements: ['Food Photography', 'Video Production', 'Lighting Techniques', 'Post-processing'],
+      icon: '📸',
+      color: 'from-orange-500 to-red-500'
+    },
+
+    // Digital Marketing Team
+    {
+      id: 5,
+      title: 'Social Media Manager',
+      department: 'Digital Marketing Team',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-4 years',
+      description: 'Manage and grow our social media presence across all platforms with engaging content.',
+      requirements: ['Social Media Strategy', 'Content Creation', 'Community Management', 'Analytics'],
+      icon: '📱',
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      id: 6,
+      title: 'SEO Specialist',
+      department: 'Digital Marketing Team',
+      type: 'Full-time',
+      location: 'Remote',
+      experience: '2-5 years',
+      description: 'Optimize our website and content for search engines to drive organic traffic.',
+      requirements: ['SEO Strategy', 'Keyword Research', 'Technical SEO', 'Content Optimization'],
+      icon: '🔍',
+      color: 'from-yellow-500 to-orange-500'
+    },
+    {
+      id: 7,
+      title: 'Ads Specialist',
+      department: 'Digital Marketing Team',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-4 years',
+      description: 'Create and manage paid advertising campaigns across Google, Facebook, and other platforms.',
+      requirements: ['Google Ads', 'Facebook Ads', 'Campaign Management', 'ROI Optimization'],
+      icon: '📊',
+      color: 'from-blue-500 to-purple-500'
+    },
+
+    // Content & Copy
+    {
+      id: 8,
+      title: 'Content Writer',
+      department: 'Content & Copy',
+      type: 'Full-time',
+      location: 'Remote',
+      experience: '1-3 years',
+      description: 'Create engaging written content for blogs, social media, and marketing materials.',
+      requirements: ['Content Writing', 'SEO Writing', 'Food Industry Knowledge', 'Creative Writing'],
+      icon: '✍️',
+      color: 'from-indigo-500 to-purple-500'
+    },
+    {
+      id: 9,
+      title: 'Copywriter',
+      department: 'Content & Copy',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-4 years',
+      description: 'Write compelling copy for advertisements, email campaigns, and marketing materials.',
+      requirements: ['Copywriting', 'Brand Voice', 'A/B Testing', 'Conversion Optimization'],
+      icon: '📝',
+      color: 'from-teal-500 to-cyan-500'
+    },
+
+    // Analytics
+    {
+      id: 10,
+      title: 'Data Analyst / Performance Tracker',
+      department: 'Analytics',
+      type: 'Full-time',
+      location: 'Remote/Hybrid',
+      experience: '2-5 years',
+      description: 'Analyze data to track performance, identify trends, and provide actionable insights.',
+      requirements: ['Data Analysis', 'Google Analytics', 'Excel/SQL', 'Reporting'],
+      icon: '📈',
+      color: 'from-emerald-500 to-green-500'
+    }
+  ];
+
   function openPlan(plan) {
     setSelectedPlan(plan);
     setShowQuickOrder(true);
   }
+
+  // Plan selection handlers
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setShowDietSelection(true);
+    setShowMealSelection(false);
+    setShowPlanCards(false);
+    setSelectedDietType('');
+    setSelectedMealType('');
+  };
+
+  const handleDurationSelect = (duration) => {
+    setSelectedDuration(duration);
+    setShowDietSelection(true);
+    setShowMealSelection(false);
+    setShowPlanCards(false);
+    setSelectedDietType('');
+    setSelectedMealType('');
+  };
+
+  const handleDietTypeSelect = (dietType) => {
+    setSelectedDietType(dietType);
+    setShowMealSelection(true);
+    setShowPlanCards(false);
+    setSelectedMealType('');
+  };
+
+  const handleMealTypeSelect = (mealType) => {
+    setSelectedMealType(mealType);
+    setShowPlanCards(true);
+  };
+
+  const resetSelection = () => {
+    setSelectedCategory('Individual');
+    setSelectedDuration('Weekly Plan');
+    setSelectedDietType('');
+    setSelectedMealType('');
+    setShowDietSelection(false);
+    setShowMealSelection(false);
+    setShowPlanCards(false);
+  };
 
   // 3D tilt helper
   function cardMove(e) {
@@ -92,8 +580,8 @@ export default function MealVersityLanding() {
             <a href="#about" className="hover:underline">About</a>
             <a href="#plans" className="hover:underline">Meal Plans</a>
             <a href="#team" className="hover:underline">Team</a>
+            <a href="#career" className="hover:underline">Career</a>
             <a href="#contact" className="hover:underline">Contact</a>
-            <a href="#carrer" className="hover:underline">Carrer</a>
             <button 
               onClick={toggleDarkMode} 
               aria-pressed={dark} 
@@ -132,8 +620,8 @@ export default function MealVersityLanding() {
               <a href="#about" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">About</a>
               <a href="#plans" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Meal Plans</a>
               <a href="#team" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Team</a>
+              <a href="#career" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Career</a>
               <a href="#contact" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Contact</a>
-              <a href="#carrer" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Carrer</a>
               <button 
                 onClick={toggleDarkMode} 
                 className="flex items-center gap-2 px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -242,40 +730,232 @@ export default function MealVersityLanding() {
         <section id="plans" className="mt-14">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="text-2xl font-semibold">Our Plans</h4>
+              <h4 className="text-2xl font-semibold">Our Meal Plans</h4>
               <p className="mt-1 text-gray-600">Flexible subscriptions — pause, swap, or cancel anytime.</p>
             </div>
-            <div className="hidden gap-3 sm:flex">
-              <button className="px-3 py-2 border border-gray-200 rounded-lg">All</button>
-              <button className="px-3 py-2 border border-gray-200 rounded-lg">Popular</button>
-              <button className="px-3 py-2 border border-gray-200 rounded-lg">Custom</button>
+            <button 
+              onClick={resetSelection}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              Reset
+            </button>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="mt-6">
+            <div className="flex items-center justify-center space-x-2 sm:space-x-4">
+              <div className={`flex items-center space-x-2 ${selectedCategory ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  selectedCategory ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  1
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">Category</span>
+              </div>
+              <div className={`w-8 h-0.5 ${selectedDuration ? 'bg-green-500' : 'bg-gray-200'}`}></div>
+              <div className={`flex items-center space-x-2 ${selectedDuration ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  selectedDuration ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  2
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">Duration</span>
+              </div>
+              <div className={`w-8 h-0.5 ${selectedDietType ? 'bg-green-500' : 'bg-gray-200'}`}></div>
+              <div className={`flex items-center space-x-2 ${selectedDietType ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  selectedDietType ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  3
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">Diet</span>
+              </div>
+              <div className={`w-8 h-0.5 ${selectedMealType ? 'bg-green-500' : 'bg-gray-200'}`}></div>
+              <div className={`flex items-center space-x-2 ${selectedMealType ? 'text-green-600' : 'text-gray-400'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                  selectedMealType ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  4
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">Meal</span>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Plan Categories */}
+          <div className="mt-6">
+            <h5 className="mb-4 text-lg font-medium">Choose Plan Category</h5>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              {planCategories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategorySelect(category.id)}
+                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
+                    selectedCategory === category.id
+                      ? 'bg-red-500 text-white border-red-500'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                  }`}
+                >
+                  <span className="text-base sm:text-lg">{category.icon}</span>
+                  <span className="font-medium hidden sm:inline">{category.name}</span>
+                  <span className="font-medium sm:hidden">{category.name.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Duration Selection */}
+          <div className="mt-6">
+            <h5 className="mb-4 text-lg font-medium">Select Duration</h5>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => handleDurationSelect('Weekly Plan')}
+                className={`flex-1 px-4 sm:px-6 py-3 rounded-full border transition-all text-sm sm:text-base ${
+                  selectedDuration === 'Weekly Plan'
+                    ? 'bg-green-600 text-white border-green-600'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                }`}
+              >
+                Weekly Plan
+              </button>
+              <button
+                onClick={() => handleDurationSelect('Monthly Plan')}
+                className={`flex-1 px-4 sm:px-6 py-3 rounded-full border transition-all text-sm sm:text-base ${
+                  selectedDuration === 'Monthly Plan'
+                    ? 'bg-green-600 text-white border-green-600'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                }`}
+              >
+                Monthly Plan
+              </button>
+            </div>
+          </div>
+
+          {/* Diet Type Selection */}
+          {showDietSelection && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <h5 className="mb-4 text-lg font-medium">Choose Diet Type</h5>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {dietTypes.map((diet) => (
+                  <button
+                    key={diet.id}
+                    onClick={() => handleDietTypeSelect(diet.id)}
+                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
+                      selectedDietType === diet.id
+                        ? 'bg-green-500 text-white border-green-500'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <span className="text-base sm:text-lg">{diet.icon}</span>
+                    <span className="font-medium">{diet.name}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Meal Type Selection */}
+          {showMealSelection && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <h5 className="mb-4 text-lg font-medium">Select Meal Type</h5>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {mealTypes.map((meal) => (
+                  <button
+                    key={meal.id}
+                    onClick={() => handleMealTypeSelect(meal.id)}
+                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
+                      selectedMealType === meal.id
+                        ? 'bg-blue-500 text-white border-blue-500'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                  >
+                    <span className="text-base sm:text-lg">{meal.icon}</span>
+                    <span className="font-medium">{meal.name}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Plan Cards */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8"
+          >
+              <h5 className="mb-6 text-lg font-medium text-center sm:text-left">
+                {selectedCategory} Plans - {selectedDuration}
+              </h5>
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {plans.map((p, i) => (
-              <motion.article key={p.id} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1, transition: { delay: i * 0.08 } }} onMouseMove={cardMove} onMouseLeave={cardLeave} className={`p-6 rounded-3xl ${dark ? 'bg-gray-800/70' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition hover:-translate-y-2`}>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h5 className="text-lg font-semibold">{p.title}</h5>
-                    <p className="mt-2 text-sm text-gray-400">{p.desc}</p>
+                  <motion.article 
+                    key={p.id} 
+                    initial={{ y: 16, opacity: 0 }} 
+                    animate={{ y: 0, opacity: 1, transition: { delay: i * 0.08 } }} 
+                    onMouseMove={cardMove} 
+                    onMouseLeave={cardLeave} 
+                    className={`p-4 sm:p-6 rounded-3xl ${dark ? 'bg-gray-800/70' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition hover:-translate-y-2 relative ${!p.available ? 'opacity-75' : ''}`}
+                  >
+                    {p.tag && (
+                      <div className={`absolute -top-2 -right-2 text-white text-xs px-2 sm:px-3 py-1 rounded-full font-medium ${
+                        p.tag === 'Most Popular' ? 'bg-red-500' :
+                        p.tag === 'Popular' ? 'bg-blue-500' :
+                        p.tag === 'Coming Soon' ? 'bg-orange-500' :
+                        p.tag === 'Limited' ? 'bg-purple-500' :
+                        p.tag === 'Budget' ? 'bg-green-500' :
+                        p.tag === 'Flexible' ? 'bg-indigo-500' :
+                        'bg-gray-500'
+                      }`}>
+                        {p.tag}
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                      <div className="flex-1">
+                        <h5 className="text-base sm:text-lg font-semibold">{p.title}</h5>
+                        <p className="mt-2 text-xs sm:text-sm text-gray-400">{p.desc}</p>
                     <div className="mt-3 text-xs text-gray-400">{p.meals}</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-amber-400">{p.price}</div>
-                    <div className="text-xs text-gray-400">/month</div>
+                      <div className="text-left sm:text-right">
+                        <div className="text-lg sm:text-xl font-bold text-amber-400">{p.price}</div>
+                        <div className="text-xs text-gray-400">
+                          {p.price === 'Custom' ? '' : selectedDuration === 'Weekly Plan' ? '/week' : '/month'}
+                        </div>
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6">
-                  <button onClick={() => openPlan(p)} className="flex-1 px-4 py-2 text-white rounded-full shadow bg-gradient-to-r from-amber-500 to-rose-500">Subscribe</button>
-                  <button onClick={() => alert('Details coming soon')} className="px-4 py-2 border border-gray-200 rounded-full">Details</button>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
+                      {p.available ? (
+                        <>
+                          <button onClick={() => openPlan(p)} className="flex-1 px-4 py-2 text-white rounded-full shadow bg-gradient-to-r from-amber-500 to-rose-500 text-sm sm:text-base">
+                            Subscribe
+                          </button>
+                          <button onClick={() => alert('Details coming soon')} className="px-4 py-2 border border-gray-200 rounded-full text-sm sm:text-base">
+                            Details
+                          </button>
+                        </>
+                      ) : (
+                        <button disabled className="flex-1 px-4 py-2 text-gray-500 rounded-full border border-gray-300 text-sm sm:text-base cursor-not-allowed">
+                          Coming Soon
+                        </button>
+                      )}
                 </div>
 
-                <div className="mt-4 text-xs text-gray-400">Free delivery above ₹299.</div>
+                    <div className="mt-4 text-xs text-gray-400 text-center sm:text-left">
+                      {p.available ? 'Free delivery above ₹299.' : 'Notify me when available'}
+                    </div>
               </motion.article>
             ))}
           </div>
+          </motion.div>
         </section>
 
         {/* ABOUT */}
@@ -305,6 +985,134 @@ export default function MealVersityLanding() {
                 <div className="text-sm text-gray-400">{t.role}</div>
               </motion.div>
             ))}
+          </div>
+        </section>
+
+        {/* CAREER */}
+        <section id="career" className="mt-16">
+          <div className="text-center mb-12">
+            <h4 className="text-3xl font-bold mb-4">Join Our Team</h4>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              We're looking for passionate individuals to help us revolutionize the meal delivery industry. 
+              Explore our open positions and be part of our growing team.
+            </p>
+          </div>
+
+          {/* Department Filter */}
+          <div className="mb-8">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+              {['All', 'Creative Team', 'Digital Marketing Team', 'Content & Copy', 'Analytics'].map((dept) => (
+                <button
+                  key={dept}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedDepartment === dept
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                  }`}
+                  onClick={() => setSelectedDepartment(dept)}
+                >
+                  {dept}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Job Positions Grid */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {careerPositions
+              .filter(position => selectedDepartment === 'All' || position.department === selectedDepartment)
+              .map((position, idx) => (
+                <motion.div
+                  key={position.id}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className={`group relative p-6 rounded-2xl ${dark ? 'bg-gray-800/70' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-2`}
+                >
+                  {/* Department Badge */}
+                  <div className="absolute -top-3 -right-3">
+                    <span className={`px-3 py-1 text-xs font-medium text-white rounded-full bg-gradient-to-r ${position.color}`}>
+                      {position.department}
+                    </span>
+                  </div>
+
+                  {/* Icon and Title */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${position.color} flex items-center justify-center text-2xl`}>
+                      {position.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 transition-colors">
+                        {position.title}
+                      </h5>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-gray-500">{position.type}</span>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-sm text-gray-500">{position.location}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                    {position.description}
+                  </p>
+
+                  {/* Experience */}
+                  <div className="mb-4">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Experience</span>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{position.experience}</p>
+                  </div>
+
+                  {/* Requirements */}
+                  <div className="mb-6">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">Key Skills</span>
+                    <div className="flex flex-wrap gap-1">
+                      {position.requirements.slice(0, 3).map((req, reqIdx) => (
+                        <span
+                          key={reqIdx}
+                          className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md"
+                        >
+                          {req}
+                        </span>
+                      ))}
+                      {position.requirements.length > 3 && (
+                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md">
+                          +{position.requirements.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Apply Button */}
+                  <button
+                    onClick={() => {
+                      alert(`Application for ${position.title} - We'll contact you soon!`);
+                    }}
+                    className={`w-full py-3 px-4 rounded-xl font-medium text-white bg-gradient-to-r ${position.color} hover:shadow-lg transform transition-all duration-200 hover:scale-105`}
+                  >
+                    Apply Now
+                  </button>
+                </motion.div>
+              ))}
+          </div>
+
+          {/* Call to Action */}
+          <div className="mt-12 text-center">
+            <div className={`p-8 rounded-2xl ${dark ? 'bg-gray-800/70' : 'bg-gradient-to-r from-amber-50 to-orange-50'} border ${dark ? 'border-gray-700' : 'border-amber-200'}`}>
+              <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Don't see a position that fits?
+              </h5>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
+              </p>
+              <button
+                onClick={() => alert('General Application - We\'ll review your profile and contact you!')}
+                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-xl font-medium hover:shadow-lg transform transition-all duration-200 hover:scale-105"
+              >
+                Send General Application
+              </button>
+            </div>
           </div>
         </section>
 
@@ -370,8 +1178,9 @@ export default function MealVersityLanding() {
                   <li><a href="#home" className="text-sm hover:underline">Home</a></li>
                   <li><a href="#about" className="text-sm hover:underline">About</a></li>
                   <li><a href="#plans" className="text-sm hover:underline">Meal Plans</a></li>
+                  <li><a href="#team" className="text-sm hover:underline">Team</a></li>
+                  <li><a href="#career" className="text-sm hover:underline">Career</a></li>
                   <li><a href="#contact" className="text-sm hover:underline">Contact</a></li>
-                  <li><a href="#carrer" className="text-sm hover:underline">Career</a></li>
                 </ul>
               </div>
               
