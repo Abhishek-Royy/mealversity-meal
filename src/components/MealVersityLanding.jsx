@@ -5,6 +5,7 @@ import { FiSun, FiMoon } from 'react-icons/fi';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import MealPlanSubscription from './MealPlanSubscription';
 
 export default function MealVersityLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,14 +16,6 @@ export default function MealVersityLanding() {
   const heroControls = useAnimation();
   const countersRef = useRef(null);
 
-  // Plan selection states
-  const [selectedCategory, setSelectedCategory] = useState('Individual');
-  const [selectedDuration, setSelectedDuration] = useState('Weekly Plan');
-  const [selectedDietType, setSelectedDietType] = useState('');
-  const [selectedMealType, setSelectedMealType] = useState('');
-  const [showDietSelection, setShowDietSelection] = useState(false);
-  const [showMealSelection, setShowMealSelection] = useState(false);
-  const [showPlanCards, setShowPlanCards] = useState(true); // Always show plans on load
   
   // Career section states
   const [selectedDepartment, setSelectedDepartment] = useState('All');
@@ -56,322 +49,57 @@ export default function MealVersityLanding() {
     heroControls.start({ y: [6, -6, 6], transition: { y: { yoyo: Infinity, duration: 6, ease: 'easeInOut' } } });
   }, [heroControls]);
 
-  // Plan categories
-  const planCategories = [
-    { id: 'Individual', name: 'Individual', icon: '👤' },
-    { id: 'Family Pack', name: 'Family Pack', icon: '👨‍👩‍👧‍👦' },
-    { id: 'Corporate Office', name: 'Corporate Office', icon: '🏢' },
-    { id: 'Migrant Worker', name: 'Migrant Worker', icon: '👷‍♂️' },
-    { id: 'Festival Specials', name: 'Festival Specials', icon: '🎁' },
-  ];
 
-  // Diet types
-  const dietTypes = [
-    { id: 'veg', name: 'Veg', icon: '🥬' },
-    { id: 'non-veg', name: 'Non-Veg', icon: '🍖' },
-    { id: 'veg-non-veg', name: 'Veg + Non-Veg', icon: '🍽️' },
-  ];
-
-  // Meal types
-  const mealTypes = [
-    { id: 'lunch', name: 'Lunch', icon: '🍽️' },
-    { id: 'dinner', name: 'Dinner', icon: '🌙' },
-    { id: 'lunch-dinner', name: 'Lunch + Dinner', icon: '🍽️🌙' },
-  ];
-
-  // Plan cards based on selections
-  const getFilteredPlans = () => {
-    const basePlans = [
-      // Individual Plans
-      { 
-        id: 1, 
-        title: 'Daily Meal Plan', 
-        desc: 'Balanced breakfast, lunch & dinner — chef-curated.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,749' : '₹6,999', 
-        tag: 'Most Popular', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 2, 
-        title: 'Premium Combo', 
-        desc: 'Lunch + Dinner — chef specials.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹2,499' : '₹9,999', 
-        tag: 'Popular', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'non-veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 3, 
-        title: 'Custom Plan', 
-        desc: 'Pick meals, schedule deliveries, swap anytime.', 
-        price: 'Custom', 
-        tag: 'Flexible', 
-        meals: 'Flexible',
-        category: 'Individual',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 4, 
-        title: 'Veg Delight', 
-        desc: 'Pure vegetarian meals with fresh local ingredients.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,299' : '₹4,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'veg',
-        mealType: 'lunch',
-        available: true
-      },
-      { 
-        id: 5, 
-        title: 'Non-Veg Special', 
-        desc: 'Premium non-vegetarian meals with quality proteins.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,999' : '₹7,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'non-veg',
-        mealType: 'dinner',
-        available: true
-      },
-      { 
-        id: 6, 
-        title: 'Mixed Cuisine', 
-        desc: 'Best of both worlds - veg and non-veg options.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,599' : '₹5,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch',
-        available: true
-      },
-      { 
-        id: 7, 
-        title: 'Evening Feast', 
-        desc: 'Special dinner plans with gourmet options.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,399' : '₹5,499', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'veg',
-        mealType: 'dinner',
-        available: true
-      },
-      { 
-        id: 8, 
-        title: 'Protein Power', 
-        desc: 'High-protein non-veg meals for fitness enthusiasts.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹2,199' : '₹8,799', 
-        tag: 'Coming Soon', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Individual',
-        dietType: 'non-veg',
-        mealType: 'lunch-dinner',
-        available: false
-      },
-
-      // Family Pack Plans
-      { 
-        id: 9, 
-        title: 'Family Veg Feast', 
-        desc: 'Complete vegetarian meals for the whole family.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹4,999' : '₹19,999', 
-        tag: 'Popular', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Family Pack',
-        dietType: 'veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 10, 
-        title: 'Family Mixed', 
-        desc: 'Variety of veg and non-veg meals for family preferences.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹5,999' : '₹23,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Family Pack',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 11, 
-        title: 'Family Lunch Special', 
-        desc: 'Daily lunch plans for working families.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹3,499' : '₹13,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Family Pack',
-        dietType: 'veg',
-        mealType: 'lunch',
-        available: true
-      },
-      { 
-        id: 12, 
-        title: 'Family Dinner Club', 
-        desc: 'Evening meals for family bonding time.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹3,999' : '₹15,999', 
-        tag: 'Coming Soon', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Family Pack',
-        dietType: 'non-veg',
-        mealType: 'dinner',
-        available: false
-      },
-
-      // Corporate Office Plans
-      { 
-        id: 13, 
-        title: 'Office Lunch Program', 
-        desc: 'Bulk lunch delivery for corporate offices.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹2,999' : '₹11,999', 
-        tag: 'Popular', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Corporate Office',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch',
-        available: true
-      },
-      { 
-        id: 14, 
-        title: 'Executive Dining', 
-        desc: 'Premium meals for corporate executives.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹4,499' : '₹17,999', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Corporate Office',
-        dietType: 'veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 15, 
-        title: 'Team Building Meals', 
-        desc: 'Special group meals for team events.', 
-        price: 'Custom', 
-        tag: 'Coming Soon', 
-        meals: 'Flexible',
-        category: 'Corporate Office',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch-dinner',
-        available: false
-      },
-
-      // Migrant Worker Plans
-      { 
-        id: 16, 
-        title: 'Worker Basic', 
-        desc: 'Affordable nutritious meals for migrant workers.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹799' : '₹2,999', 
-        tag: 'Budget', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Migrant Worker',
-        dietType: 'veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 17, 
-        title: 'Worker Plus', 
-        desc: 'Enhanced meals with better variety and nutrition.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹1,199' : '₹4,799', 
-        tag: '', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Migrant Worker',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 18, 
-        title: 'Worker Dinner', 
-        desc: 'Evening meals for hardworking migrants.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹599' : '₹2,399', 
-        tag: 'Coming Soon', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Migrant Worker',
-        dietType: 'veg',
-        mealType: 'dinner',
-        available: false
-      },
-
-      // Festival Specials
-      { 
-        id: 19, 
-        title: 'Diwali Special', 
-        desc: 'Traditional festive meals for Diwali celebration.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹2,999' : '₹11,999', 
-        tag: 'Limited', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Festival Specials',
-        dietType: 'veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 20, 
-        title: 'Eid Feast', 
-        desc: 'Special non-veg meals for Eid celebrations.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹3,499' : '₹13,999', 
-        tag: 'Limited', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Festival Specials',
-        dietType: 'non-veg',
-        mealType: 'lunch-dinner',
-        available: true
-      },
-      { 
-        id: 21, 
-        title: 'Christmas Special', 
-        desc: 'Festive meals for Christmas celebrations.', 
-        price: selectedDuration === 'Weekly Plan' ? '₹2,799' : '₹11,199', 
-        tag: 'Coming Soon', 
-        meals: selectedDuration === 'Weekly Plan' ? '7 days' : '28 days',
-        category: 'Festival Specials',
-        dietType: 'veg-non-veg',
-        mealType: 'lunch-dinner',
-        available: false
-      },
-    ];
-
-    const filteredPlans = basePlans.filter(plan => {
-      if (selectedCategory && plan.category !== selectedCategory) return false;
-      if (selectedDietType && plan.dietType !== selectedDietType) return false;
-      if (selectedMealType && plan.mealType !== selectedMealType) return false;
-      return true;
-    });
-
-    // If no specific filters are applied, show 3 default popular plans
-    if (!selectedDietType && !selectedMealType) {
-      const defaultPlans = basePlans.filter(plan => 
-        plan.category === selectedCategory && 
-        (plan.tag === 'Most Popular' || plan.tag === 'Popular' || plan.tag === 'Budget')
-      );
-      return defaultPlans.slice(0, 3);
-    }
-
-    // If filters are applied, return filtered results (up to 3)
-    return filteredPlans.slice(0, 3);
-  };
-
-  const plans = getFilteredPlans();
 
   const team = [
-    { id: 1, name: 'Tarik Anowar', role: 'CEO' },
-    { id: 2, name: 'Afreen Sarkar', role: 'CMO' },
-    { id: 3, name: 'Muklesur Rahaman', role: 'CFO' },
-    { id: 4, name: 'Asif Ahmed', role: 'Head Chef' },
+    { 
+      id: 1, 
+      name: 'Tarik Anowar', 
+      role: 'CEO & Founder', 
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80',
+      bio: 'Passionate about making healthy food accessible to everyone.',
+      social: {
+        linkedin: 'https://linkedin.com',
+        twitter: 'https://twitter.com',
+        instagram: 'https://instagram.com'
+      }
+    },
+    { 
+      id: 2, 
+      name: 'Afreen Sarkar', 
+      role: 'Chief Marketing Officer', 
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80',
+      bio: 'Digital marketing expert with a passion for food and sustainability.',
+      social: {
+        linkedin: 'https://linkedin.com',
+        twitter: 'https://twitter.com',
+        instagram: 'https://instagram.com'
+      }
+    },
+    { 
+      id: 3, 
+      name: 'Muklesur Rahaman', 
+      role: 'Chief Financial Officer', 
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80',
+      bio: 'Financial strategist focused on sustainable growth and ethical business practices.',
+      social: {
+        linkedin: 'https://linkedin.com',
+        twitter: 'https://twitter.com',
+        instagram: 'https://instagram.com'
+      }
+    },
+    { 
+      id: 4, 
+      name: 'Asif Ahmed', 
+      role: 'Executive Chef', 
+      image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80',
+      bio: 'Award-winning chef with 15+ years of experience in creating nutritious, delicious meals.',
+      social: {
+        linkedin: 'https://linkedin.com',
+        twitter: 'https://twitter.com',
+        instagram: 'https://instagram.com'
+      }
+    },
   ];
 
   // Career positions data
@@ -511,45 +239,6 @@ export default function MealVersityLanding() {
   }
 
   // Plan selection handlers
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    setShowDietSelection(true);
-    setShowMealSelection(false);
-    setShowPlanCards(false);
-    setSelectedDietType('');
-    setSelectedMealType('');
-  };
-
-  const handleDurationSelect = (duration) => {
-    setSelectedDuration(duration);
-    setShowDietSelection(true);
-    setShowMealSelection(false);
-    setShowPlanCards(false);
-    setSelectedDietType('');
-    setSelectedMealType('');
-  };
-
-  const handleDietTypeSelect = (dietType) => {
-    setSelectedDietType(dietType);
-    setShowMealSelection(true);
-    setShowPlanCards(false);
-    setSelectedMealType('');
-  };
-
-  const handleMealTypeSelect = (mealType) => {
-    setSelectedMealType(mealType);
-    setShowPlanCards(true);
-  };
-
-  const resetSelection = () => {
-    setSelectedCategory('Individual');
-    setSelectedDuration('Weekly Plan');
-    setSelectedDietType('');
-    setSelectedMealType('');
-    setShowDietSelection(false);
-    setShowMealSelection(false);
-    setShowPlanCards(false);
-  };
 
   // 3D tilt helper
   function cardMove(e) {
@@ -728,234 +417,7 @@ export default function MealVersityLanding() {
 
         {/* PLANS */}
         <section id="plans" className="mt-14">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="text-2xl font-semibold">Our Meal Plans</h4>
-              <p className="mt-1 text-gray-600">Flexible subscriptions — pause, swap, or cancel anytime.</p>
-            </div>
-            <button 
-              onClick={resetSelection}
-              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              Reset
-            </button>
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="mt-6">
-            <div className="flex items-center justify-center space-x-2 sm:space-x-4">
-              <div className={`flex items-center space-x-2 ${selectedCategory ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  selectedCategory ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  1
-                </div>
-                <span className="text-sm font-medium hidden sm:inline">Category</span>
-              </div>
-              <div className={`w-8 h-0.5 ${selectedDuration ? 'bg-green-500' : 'bg-gray-200'}`}></div>
-              <div className={`flex items-center space-x-2 ${selectedDuration ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  selectedDuration ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  2
-                </div>
-                <span className="text-sm font-medium hidden sm:inline">Duration</span>
-              </div>
-              <div className={`w-8 h-0.5 ${selectedDietType ? 'bg-green-500' : 'bg-gray-200'}`}></div>
-              <div className={`flex items-center space-x-2 ${selectedDietType ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  selectedDietType ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  3
-                </div>
-                <span className="text-sm font-medium hidden sm:inline">Diet</span>
-              </div>
-              <div className={`w-8 h-0.5 ${selectedMealType ? 'bg-green-500' : 'bg-gray-200'}`}></div>
-              <div className={`flex items-center space-x-2 ${selectedMealType ? 'text-green-600' : 'text-gray-400'}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  selectedMealType ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  4
-                </div>
-                <span className="text-sm font-medium hidden sm:inline">Meal</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Plan Categories */}
-          <div className="mt-6">
-            <h5 className="mb-4 text-lg font-medium">Choose Plan Category</h5>
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {planCategories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategorySelect(category.id)}
-                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
-                    selectedCategory === category.id
-                      ? 'bg-red-500 text-white border-red-500'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                  }`}
-                >
-                  <span className="text-base sm:text-lg">{category.icon}</span>
-                  <span className="font-medium hidden sm:inline">{category.name}</span>
-                  <span className="font-medium sm:hidden">{category.name.split(' ')[0]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Duration Selection */}
-          <div className="mt-6">
-            <h5 className="mb-4 text-lg font-medium">Select Duration</h5>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => handleDurationSelect('Weekly Plan')}
-                className={`flex-1 px-4 sm:px-6 py-3 rounded-full border transition-all text-sm sm:text-base ${
-                  selectedDuration === 'Weekly Plan'
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                }`}
-              >
-                Weekly Plan
-              </button>
-              <button
-                onClick={() => handleDurationSelect('Monthly Plan')}
-                className={`flex-1 px-4 sm:px-6 py-3 rounded-full border transition-all text-sm sm:text-base ${
-                  selectedDuration === 'Monthly Plan'
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                }`}
-              >
-                Monthly Plan
-              </button>
-            </div>
-          </div>
-
-          {/* Diet Type Selection */}
-          {showDietSelection && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6"
-            >
-              <h5 className="mb-4 text-lg font-medium">Choose Diet Type</h5>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {dietTypes.map((diet) => (
-                  <button
-                    key={diet.id}
-                    onClick={() => handleDietTypeSelect(diet.id)}
-                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
-                      selectedDietType === diet.id
-                        ? 'bg-green-500 text-white border-green-500'
-                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                    }`}
-                  >
-                    <span className="text-base sm:text-lg">{diet.icon}</span>
-                    <span className="font-medium">{diet.name}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Meal Type Selection */}
-          {showMealSelection && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6"
-            >
-              <h5 className="mb-4 text-lg font-medium">Select Meal Type</h5>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {mealTypes.map((meal) => (
-                  <button
-                    key={meal.id}
-                    onClick={() => handleMealTypeSelect(meal.id)}
-                    className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-full border transition-all text-sm sm:text-base ${
-                      selectedMealType === meal.id
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                    }`}
-                  >
-                    <span className="text-base sm:text-lg">{meal.icon}</span>
-                    <span className="font-medium">{meal.name}</span>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Plan Cards */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8"
-          >
-              <h5 className="mb-6 text-lg font-medium text-center sm:text-left">
-                {selectedCategory} Plans - {selectedDuration}
-              </h5>
-              <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {plans.map((p, i) => (
-                  <motion.article 
-                    key={p.id} 
-                    initial={{ y: 16, opacity: 0 }} 
-                    animate={{ y: 0, opacity: 1, transition: { delay: i * 0.08 } }} 
-                    onMouseMove={cardMove} 
-                    onMouseLeave={cardLeave} 
-                    className={`p-4 sm:p-6 rounded-3xl ${dark ? 'bg-gray-800/70' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition hover:-translate-y-2 relative ${!p.available ? 'opacity-75' : ''}`}
-                  >
-                    {p.tag && (
-                      <div className={`absolute -top-2 -right-2 text-white text-xs px-2 sm:px-3 py-1 rounded-full font-medium ${
-                        p.tag === 'Most Popular' ? 'bg-red-500' :
-                        p.tag === 'Popular' ? 'bg-blue-500' :
-                        p.tag === 'Coming Soon' ? 'bg-orange-500' :
-                        p.tag === 'Limited' ? 'bg-purple-500' :
-                        p.tag === 'Budget' ? 'bg-green-500' :
-                        p.tag === 'Flexible' ? 'bg-indigo-500' :
-                        'bg-gray-500'
-                      }`}>
-                        {p.tag}
-                      </div>
-                    )}
-                    
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                      <div className="flex-1">
-                        <h5 className="text-base sm:text-lg font-semibold">{p.title}</h5>
-                        <p className="mt-2 text-xs sm:text-sm text-gray-400">{p.desc}</p>
-                    <div className="mt-3 text-xs text-gray-400">{p.meals}</div>
-                  </div>
-                      <div className="text-left sm:text-right">
-                        <div className="text-lg sm:text-xl font-bold text-amber-400">{p.price}</div>
-                        <div className="text-xs text-gray-400">
-                          {p.price === 'Custom' ? '' : selectedDuration === 'Weekly Plan' ? '/week' : '/month'}
-                        </div>
-                  </div>
-                </div>
-
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
-                      {p.available ? (
-                        <>
-                          <button onClick={() => openPlan(p)} className="flex-1 px-4 py-2 text-white rounded-full shadow bg-gradient-to-r from-amber-500 to-rose-500 text-sm sm:text-base">
-                            Subscribe
-                          </button>
-                          <button onClick={() => alert('Details coming soon')} className="px-4 py-2 border border-gray-200 rounded-full text-sm sm:text-base">
-                            Details
-                          </button>
-                        </>
-                      ) : (
-                        <button disabled className="flex-1 px-4 py-2 text-gray-500 rounded-full border border-gray-300 text-sm sm:text-base cursor-not-allowed">
-                          Coming Soon
-                        </button>
-                      )}
-                </div>
-
-                    <div className="mt-4 text-xs text-gray-400 text-center sm:text-left">
-                      {p.available ? 'Free delivery above ₹299.' : 'Notify me when available'}
-                    </div>
-              </motion.article>
-            ))}
-          </div>
-          </motion.div>
+          <MealPlanSubscription dark={dark} />
         </section>
 
         {/* ABOUT */}
@@ -975,14 +437,60 @@ export default function MealVersityLanding() {
         </section>
 
         {/* TEAM */}
-        <section id="team" className="mt-16">
-          <h4 className="text-2xl font-semibold">Our Team</h4>
-          <div className="grid grid-cols-1 gap-6 mt-6 sm:grid-cols-3">
+        <section id="team" className="mt-24 mb-16">
+          <div className="text-center mb-12">
+            <h4 className="text-3xl font-bold mb-4">Meet Our Team</h4>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              The passionate individuals behind MealVersity who are dedicated to bringing healthy, delicious meals to your doorstep.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-8 mt-10 sm:grid-cols-2 lg:grid-cols-4">
             {team.map((t, idx) => (
-              <motion.div key={t.id} initial={{ scale: 0.98, opacity: 0 }} animate={{ scale: 1, opacity: 1, transition: { delay: idx * 0.06 } }} className={`p-6 rounded-2xl ${dark ? 'bg-gray-800/70' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow text-center transform transition hover:-translate-y-1`}>
-                <div className="flex items-center justify-center w-20 h-20 mx-auto text-lg font-semibold rounded-full bg-gradient-to-tr from-amber-200 to-rose-200">{t.name.split(' ').map(n => n[0]).slice(0,2).join('')}</div>
-                <h5 className="mt-4 font-semibold">{t.name}</h5>
-                <div className="text-sm text-gray-400">{t.role}</div>
+              <motion.div 
+                key={t.id} 
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1, transition: { delay: idx * 0.1 } }} 
+                className={`group overflow-hidden rounded-2xl ${dark ? 'bg-gray-800/80' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-2`}
+              >
+                {/* Image Section */}
+                <div className="relative overflow-hidden h-64">
+                  <img 
+                    src={t.image} 
+                    alt={t.name} 
+                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110" 
+                    loading="lazy" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <p className={`text-white text-sm mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100`}>
+                      {t.bio}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Content Section */}
+                <div className="p-6">
+                  <h5 className={`text-xl font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>{t.name}</h5>
+                  <div className={`text-sm ${dark ? 'text-amber-400' : 'text-amber-600'} font-medium mb-3`}>{t.role}</div>
+                  
+                  {/* Social Media Links */}
+                  <div className="flex items-center space-x-3 mt-4">
+                    <a href={t.social.linkedin} target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${dark ? 'bg-gray-700 hover:bg-blue-700 text-gray-300' : 'bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white'}`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-linkedin" viewBox="0 0 16 16">
+                        <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+                      </svg>
+                    </a>
+                    <a href={t.social.twitter} target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${dark ? 'bg-gray-700 hover:bg-blue-500 text-gray-300' : 'bg-gray-100 hover:bg-blue-400 text-gray-600 hover:text-white'}`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-twitter" viewBox="0 0 16 16">
+                        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+                      </svg>
+                    </a>
+                    <a href={t.social.instagram} target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${dark ? 'bg-gray-700 hover:bg-pink-600 text-gray-300' : 'bg-gray-100 hover:bg-gradient-to-tr from-purple-500 to-pink-500 text-gray-600 hover:text-white'}`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-instagram" viewBox="0 0 16 16">
+                        <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
