@@ -20,11 +20,23 @@ export default function MealVersityLanding() {
     phone: '',
     notifyMe: true
   });
+  
+  // Job application form state
+  const [showJobApplication, setShowJobApplication] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [jobApplicationData, setJobApplicationData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    resume: null
+  });
   const heroControls = useAnimation();
   const countersRef = useRef(null);
   const preregisterFormRef = useRef(null);
+  const jobApplicationFormRef = useRef(null);
 
   // Career section states
+  const [selectedJobCategory, setSelectedJobCategory] = useState('Tech');
   const [selectedDepartment, setSelectedDepartment] = useState('All');
 
   // Stable dark mode toggle handler
@@ -100,15 +112,69 @@ export default function MealVersityLanding() {
     }
   };
 
-  // Close popup when clicking outside
+  // Handle job application form
+  const handleJobApplicationChange = (e) => {
+    const { name, value, type } = e.target;
+    
+    if (type === 'file') {
+      setJobApplicationData(prev => ({
+        ...prev,
+        [name]: e.target.files[0]
+      }));
+    } else {
+      setJobApplicationData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleJobApplicationSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Show loading indicator
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Submitting...';
+    
+    try {
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Success message
+      alert(`✅ Thank you for applying for ${selectedJob?.title || 'this position'}! We'll review your application and contact you soon.`);
+      
+      // Reset form and close popup on success
+      setShowJobApplication(false);
+      setJobApplicationData({
+        name: '',
+        email: '',
+        phone: '',
+        resume: null
+      });
+    } catch (error) {
+      console.error("Error submitting job application:", error);
+      alert(`❌ Failed to submit: ${error.message || "Please check your connection and try again."}`);
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
+  };
+
+  // Close popups when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (preregisterFormRef.current && !preregisterFormRef.current.contains(event.target)) {
         setShowAppPreregister(false);
       }
+      if (jobApplicationFormRef.current && !jobApplicationFormRef.current.contains(event.target)) {
+        setShowJobApplication(false);
+      }
     }
 
-    if (showAppPreregister) {
+    if (showAppPreregister || showJobApplication) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -117,7 +183,7 @@ export default function MealVersityLanding() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showAppPreregister]);
+  }, [showAppPreregister, showJobApplication]);
 
   useEffect(() => {
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
@@ -201,7 +267,7 @@ export default function MealVersityLanding() {
   ];
 
   // Career positions data
-  const careerPositions = [
+  const techPositions = [
     // Creative Team
     {
       id: 1,
@@ -331,6 +397,126 @@ export default function MealVersityLanding() {
     }
   ];
 
+  // Culinary positions data
+  const culinaryPositions = [
+    // Chef
+    {
+      id: 11,
+      title: 'Head Chef',
+      department: 'Chef',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '5+ years',
+      description: 'Lead our kitchen team in creating delicious, nutritious meals while maintaining high standards of quality and efficiency.',
+      requirements: ['Culinary Degree', 'Menu Planning', 'Kitchen Management', 'Food Safety'],
+      icon: '👨‍🍳',
+      color: 'from-red-500 to-orange-500'
+    },
+    {
+      id: 12,
+      title: 'Sous Chef',
+      department: 'Chef',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '3-5 years',
+      description: 'Assist the Head Chef in daily kitchen operations, menu planning, and staff supervision.',
+      requirements: ['Culinary Experience', 'Team Leadership', 'Menu Development', 'Inventory Management'],
+      icon: '🍳',
+      color: 'from-orange-500 to-amber-500'
+    },
+    {
+      id: 13,
+      title: 'Pastry Chef',
+      department: 'Chef',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '2-4 years',
+      description: 'Create delicious desserts and baked goods for our meal plans and special orders.',
+      requirements: ['Pastry Expertise', 'Baking Skills', 'Recipe Development', 'Presentation'],
+      icon: '🧁',
+      color: 'from-pink-400 to-rose-500'
+    },
+
+    // Helper
+    {
+      id: 14,
+      title: 'Kitchen Assistant',
+      department: 'Helper',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '0-2 years',
+      description: 'Assist chefs with food preparation, kitchen cleaning, and maintaining food safety standards.',
+      requirements: ['Basic Cooking Skills', 'Food Safety Knowledge', 'Team Player', 'Physical Stamina'],
+      icon: '🔪',
+      color: 'from-blue-400 to-indigo-500'
+    },
+    {
+      id: 15,
+      title: 'Dishwasher',
+      department: 'Helper',
+      type: 'Part-time',
+      location: 'On-site',
+      experience: '0-1 year',
+      description: 'Maintain cleanliness of kitchen equipment, utensils, and dishes while following sanitation protocols.',
+      requirements: ['Attention to Detail', 'Physical Stamina', 'Reliability', 'Sanitation Knowledge'],
+      icon: '🧼',
+      color: 'from-cyan-400 to-blue-500'
+    },
+    {
+      id: 16,
+      title: 'Food Prep Assistant',
+      department: 'Helper',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '0-2 years',
+      description: 'Prepare ingredients for chefs, including washing, chopping, and portioning food items.',
+      requirements: ['Knife Skills', 'Food Safety', 'Organization', 'Efficiency'],
+      icon: '🥕',
+      color: 'from-green-400 to-emerald-500'
+    },
+
+    // Delivery
+    {
+      id: 17,
+      title: 'Delivery Driver',
+      department: 'Delivery',
+      type: 'Full-time',
+      location: 'On-site/Mobile',
+      experience: '1+ years',
+      description: 'Deliver meals to customers in a timely, professional manner while ensuring food quality and safety.',
+      requirements: ['Valid Driver\'s License', 'Clean Driving Record', 'Navigation Skills', 'Customer Service'],
+      icon: '🚗',
+      color: 'from-amber-400 to-yellow-500'
+    },
+    {
+      id: 18,
+      title: 'Delivery Coordinator',
+      department: 'Delivery',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '1-3 years',
+      description: 'Manage delivery schedules, routes, and logistics to ensure efficient and timely meal deliveries.',
+      requirements: ['Logistics Experience', 'Route Planning', 'Problem Solving', 'Communication Skills'],
+      icon: '📋',
+      color: 'from-purple-400 to-violet-500'
+    },
+    {
+      id: 19,
+      title: 'Packaging Specialist',
+      department: 'Delivery',
+      type: 'Full-time',
+      location: 'On-site',
+      experience: '0-2 years',
+      description: 'Package meals for delivery, ensuring proper temperature control, presentation, and food safety.',
+      requirements: ['Attention to Detail', 'Food Safety Knowledge', 'Efficiency', 'Organization'],
+      icon: '📦',
+      color: 'from-teal-400 to-green-500'
+    }
+  ];
+  
+  // Combined positions based on selected category
+  const careerPositions = selectedJobCategory === 'Tech' ? techPositions : culinaryPositions;
+
   function openPlan(plan) {
     setSelectedPlan(plan);
     setShowQuickOrder(true);
@@ -452,10 +638,110 @@ export default function MealVersityLanding() {
           </div>
         </div>
       )}
+      
+      {/* Job Application Popup */}
+      {showJobApplication && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
+          <div 
+            ref={jobApplicationFormRef}
+            className={`relative w-full max-w-md p-4 overflow-y-auto ${dark ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-2xl max-h-[80vh]`}
+          >
+            <button 
+              onClick={() => setShowJobApplication(false)}
+              className="absolute p-2 rounded-full top-4 right-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            
+            <div className="mb-3 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-gradient-to-r from-amber-400 to-rose-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold">Apply for {selectedJob?.title || 'Position'}</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Complete the form below to submit your application</p>
+            </div>
+            
+            <form onSubmit={handleJobApplicationSubmit} className="space-y-3">
+              <div>
+                <label htmlFor="job-name" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+                <input
+                  type="text"
+                  id="job-name"
+                  name="name"
+                  value={jobApplicationData.name}
+                  onChange={handleJobApplicationChange}
+                  required
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  placeholder="Your full name"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="job-email" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                <input
+                  type="email"
+                  id="job-email"
+                  name="email"
+                  value={jobApplicationData.email}
+                  onChange={handleJobApplicationChange}
+                  required
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  placeholder="your.email@example.com"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="job-phone" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+                <input
+                  type="tel"
+                  id="job-phone"
+                  name="phone"
+                  value={jobApplicationData.phone}
+                  onChange={handleJobApplicationChange}
+                  required
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  placeholder="Your phone number"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="resume" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Upload CV/Resume</label>
+                <input
+                  type="file"
+                  id="resume"
+                  name="resume"
+                  onChange={handleJobApplicationChange}
+                  required
+                  accept=".pdf,.doc,.docx"
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100`}
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
+              </div>
+              
+              <div className="pt-1">
+                <button
+                  type="submit"
+                  className="w-full py-2 text-sm font-medium text-white transition duration-300 rounded-lg bg-gradient-to-r from-amber-500 to-rose-500 hover:shadow-lg"
+                >
+                  Apply Now
+                </button>
+              </div>
+              
+              <div className="mt-2 text-[10px] text-center text-gray-500 dark:text-gray-400">
+                By applying, you agree to our Terms of Service and Privacy Policy.
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Header/Navbar */}
       <header className="fixed top-0 z-50 w-full mx-auto">
-        <nav className={`max-w-8xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between ${dark ? 'bg-gray-800/90 backdrop-blur-md' : 'bg-white/90 backdrop-blur-md'} rounded-lg mx-2 sm:mx-4 md:mx-6 mt-4 shadow-lg`}>
+        <nav className={`max-w-8xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between ${dark ? 'bg-gray-800/90 backdrop-blur-md' : 'bg-white/90 backdrop-blur-md'} rounded-lg mx-2 sm:mx-4 md:mx-6 shadow-lg`}>
           <div className="flex items-center gap-2 sm:gap-4">
             <div className="flex items-center justify-center w-10 h-10  sm:w-12 sm:h-12 rounded-xl overflow-hidden">
               <img src="/logo.png" alt="MealVersity Logo" className={`w-full h-full object-contain ${dark ? "invert" : ""}`} />
@@ -504,7 +790,7 @@ export default function MealVersityLanding() {
             initial={{ opacity: 0, height: 0 }} 
             animate={{ opacity: 1, height: 'auto' }} 
             exit={{ opacity: 0, height: 0 }}
-            className={`md:hidden mx-2 sm:mx-4 md:mx-6 mt-2 rounded-lg ${dark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-md shadow-lg border ${dark ? 'border-gray-700' : 'border-gray-200'}`}
+            className={`md:hidden mx-2 sm:mx-4 md:mx-6 rounded-lg ${dark ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-md shadow-lg border ${dark ? 'border-gray-700' : 'border-gray-200'}`}
           >
             <div className="flex flex-col px-6 py-4">
               <a href="#home" onClick={() => setMenuOpen(false)} className="px-4 py-3 transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
@@ -581,7 +867,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">Wholesome, balanced, and prepared fresh daily.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹99</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -594,7 +880,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">High-protein meal with fresh vegetables and lean meat.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹129</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -607,7 +893,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">Inspired by Mediterranean cuisine with fresh herbs and olive oil.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹149</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -620,7 +906,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">A perfect blend of Asian flavors with fresh vegetables and tofu.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹119</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -633,7 +919,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">Start your day with a nutritious and filling breakfast option.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹89</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -646,7 +932,7 @@ export default function MealVersityLanding() {
                       <p className="mt-1 text-sm text-gray-600">Indulge in our healthy yet delicious dessert options.</p>
                       <div className="flex items-center justify-between mt-3">
                         <div className="text-lg font-bold">₹79</div>
-                        <button onClick={() => { setSelectedPlan(plans[0]); setShowQuickOrder(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
@@ -754,33 +1040,72 @@ export default function MealVersityLanding() {
         <section id="career" className="mt-16">
           <div className="mb-12 text-center">
             <h4 className="mb-4 text-3xl font-bold">Join Our Team</h4>
-            <p className="max-w-2xl mx-auto text-lg text-gray-600">
+            <p className="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">
               We're looking for passionate individuals to help us revolutionize the meal delivery industry. 
               Explore our open positions and be part of our growing team.
             </p>
           </div>
 
-          {/* Department Filter */}
+          {/* Job Category Tabs */}
           <div className="mb-8">
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex p-1 bg-gray-100 rounded-lg dark:bg-gray-800">
+                {['Tech', 'Culinary'].map((category) => (
+                  <button
+                    key={category}
+                    className={`px-6 py-2 text-sm font-medium rounded-md transition-all ${
+                      selectedJobCategory === category
+                        ? 'bg-amber-500 text-white shadow-md'
+                        : 'text-gray-700 hover:text-amber-600 dark:text-gray-300 dark:hover:text-amber-400'
+                    }`}
+                    onClick={() => {
+                      setSelectedJobCategory(category);
+                      setSelectedDepartment('All');
+                    }}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Department Filter */}
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-              {['All', 'Creative Team', 'Digital Marketing Team', 'Content & Copy', 'Analytics'].map((dept) => (
-                <button
-                  key={dept}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    selectedDepartment === dept
-                      ? 'bg-amber-500 text-white'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
-                  }`}
-                  onClick={() => setSelectedDepartment(dept)}
-                >
-                  {dept}
-                </button>
-              ))}
+              {selectedJobCategory === 'Tech' ? 
+                ['All', 'Creative Team', 'Digital Marketing Team', 'Content & Copy', 'Analytics'].map((dept) => (
+                  <button
+                    key={dept}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedDepartment === dept
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                    onClick={() => setSelectedDepartment(dept)}
+                    aria-label={`Filter by ${dept}`}
+                  >
+                    {dept}
+                  </button>
+                )) : 
+                ['All', 'Chef', 'Helper', 'Delivery'].map((dept) => (
+                  <button
+                    key={dept}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedDepartment === dept
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600'
+                    }`}
+                    onClick={() => setSelectedDepartment(dept)}
+                    aria-label={`Filter by ${dept}`}
+                  >
+                    {dept}
+                  </button>
+                ))
+              }
             </div>
           </div>
 
           {/* Job Positions Grid */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {careerPositions
               .filter(position => selectedDepartment === 'All' || position.department === selectedDepartment)
               .map((position, idx) => (
@@ -849,7 +1174,14 @@ export default function MealVersityLanding() {
                   {/* Apply Button */}
                   <button
                     onClick={() => {
-                      alert(`Application for ${position.title} - We'll contact you soon!`);
+                      setSelectedJob(position);
+                      setJobApplicationData({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        resume: null
+                      });
+                      setShowJobApplication(true);
                     }}
                     className={`w-full py-3 px-4 rounded-xl font-medium text-white bg-gradient-to-r ${position.color} hover:shadow-lg transform transition-all duration-200 hover:scale-105`}
                   >
@@ -869,7 +1201,19 @@ export default function MealVersityLanding() {
                 We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
               </p>
               <button
-                onClick={() => alert('General Application - We\'ll review your profile and contact you!')}
+                onClick={() => {
+                  setSelectedJob({
+                    title: 'General Application',
+                    department: 'Any Department'
+                  });
+                  setJobApplicationData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    resume: null
+                  });
+                  setShowJobApplication(true);
+                }}
                 className="px-6 py-3 font-medium text-white transition-all duration-200 transform bg-gradient-to-r from-amber-500 to-rose-500 rounded-xl hover:shadow-lg hover:scale-105"
               >
                 Send General Application
