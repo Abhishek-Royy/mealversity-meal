@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 const MealPlanSubscription = ({ dark = false }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [userSelections, setUserSelections] = useState({
-    frequency: 'weekly',
+    frequency: '',
     diet: '',
     meal: ''
   });
   const [currentStep, setCurrentStep] = useState('frequency');
+  const [allStepsCompleted, setAllStepsCompleted] = useState(false);
   
   const slides = [
     {
@@ -90,6 +91,11 @@ const MealPlanSubscription = ({ dark = false }) => {
         setCurrentStep('diet');
       } else if (group === 'diet') {
         setCurrentStep('meal');
+      } else if (group === 'meal') {
+        // Check if all steps are completed
+        if (newSelections.frequency && newSelections.diet && newSelections.meal) {
+          setAllStepsCompleted(true);
+        }
       }
     }
   };
@@ -110,10 +116,11 @@ const MealPlanSubscription = ({ dark = false }) => {
     if (currentSlide !== 0) {
       setCurrentStep('frequency');
       setUserSelections({
-        frequency: 'weekly',
+        frequency: '',
         diet: '',
         meal: ''
       });
+      setAllStepsCompleted(false);
     }
   }, [currentSlide]);
 
@@ -154,7 +161,7 @@ const MealPlanSubscription = ({ dark = false }) => {
           ))}
         </div>
         
-        <div className={`relative overflow-hidden rounded-xl shadow-lg h-[600px] mb-10 ${dark ? 'bg-gray-800' : 'bg-white'}`}>
+        <div className={`relative overflow-hidden rounded-xl  h-auto mb-10 ${dark ? 'bg-gray-800' : 'bg-white'}`}>
           <div 
             className="flex h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -308,114 +315,116 @@ const MealPlanSubscription = ({ dark = false }) => {
                 </button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-                <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl relative scale-105 ${
-                  dark 
-                    ? 'bg-gray-800 border-2 border-amber-700' 
-                    : 'bg-white border-2 border-amber-200'
-                }`}>
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
-                    Most Popular
+              {allStepsCompleted && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 animate-fadeIn">
+                  <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl relative scale-105 ${
+                    dark 
+                      ? 'bg-gray-800 border-2 border-amber-700' 
+                      : 'bg-white border-2 border-amber-200'
+                  }`}>
+                    <div className="absolute top-3 right-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+                      Most Popular
+                    </div>
+                    <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
+                      <h3 className="text-xl font-semibold">Daily Meal Plan</h3>
+                    </div>
+                    <div className="p-5 flex-grow">
+                      <ul className="my-4">
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Balanced breakfast, lunch & dinner</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Chef-curated meals</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>28-day program</span>
+                        </li>
+                        <li className="py-2 flex items-center">
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Nutritionist approved</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
+                      <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
+                        <i className="fas fa-truck mr-2"></i>
+                        Free delivery above ₹299
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
-                    <h3 className="text-xl font-semibold">Daily Meal Plan</h3>
+                  
+                  <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl ${
+                    dark ? 'bg-gray-800' : 'bg-white'
+                  }`}>
+                    <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
+                      <h3 className="text-xl font-semibold">Custom Plan</h3>
+                    </div>
+                    <div className="p-5 flex-grow">
+                      <ul className="my-4">
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Pick meals, schedule deliveries</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Swap anytime</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Flexible scheduling</span>
+                        </li>
+                        <li className="py-2 flex items-center">
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Personal preferences</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
+                      <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
+                        <i className="fas fa-truck mr-2"></i>
+                        Free delivery above ₹299
+                      </p>
+                    </div>
                   </div>
-                  <div className="p-5 flex-grow">
-                    <ul className="my-4">
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Balanced breakfast, lunch & dinner</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Chef-curated meals</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>28-day program</span>
-                      </li>
-                      <li className="py-2 flex items-center">
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Nutritionist approved</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
-                    <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
-                      <i className="fas fa-truck mr-2"></i>
-                      Free delivery above ₹299
-                    </p>
+                  
+                  <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl ${
+                    dark ? 'bg-gray-800' : 'bg-white'
+                  }`}>
+                    <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
+                      <h3 className="text-xl font-semibold">Premium Combo</h3>
+                    </div>
+                    <div className="p-5 flex-grow">
+                      <ul className="my-4">
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Lunch + Dinner specials</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Chef's special recipes</span>
+                        </li>
+                        <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Premium ingredients</span>
+                        </li>
+                        <li className="py-2 flex items-center">
+                          <i className="fas fa-check-circle text-amber-500 mr-3"></i>
+                          <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Monthly themed menus</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
+                      <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
+                        <i className="fas fa-truck mr-2"></i>
+                        Free delivery above ₹299
+                      </p>
+                    </div>
                   </div>
                 </div>
-                
-                <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl ${
-                  dark ? 'bg-gray-800' : 'bg-white'
-                }`}>
-                  <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
-                    <h3 className="text-xl font-semibold">Custom Plan</h3>
-                  </div>
-                  <div className="p-5 flex-grow">
-                    <ul className="my-4">
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Pick meals, schedule deliveries</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Swap anytime</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Flexible scheduling</span>
-                      </li>
-                      <li className="py-2 flex items-center">
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Personal preferences</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
-                    <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
-                      <i className="fas fa-truck mr-2"></i>
-                      Free delivery above ₹299
-                    </p>
-                  </div>
-                </div>
-                
-                <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col transition-all hover:-translate-y-1 hover:shadow-xl ${
-                  dark ? 'bg-gray-800' : 'bg-white'
-                }`}>
-                  <div className="bg-gradient-to-r from-amber-500 to-rose-500 text-white p-4 text-center">
-                    <h3 className="text-xl font-semibold">Premium Combo</h3>
-                  </div>
-                  <div className="p-5 flex-grow">
-                    <ul className="my-4">
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Lunch + Dinner specials</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Chef's special recipes</span>
-                      </li>
-                      <li className={`py-2 border-b border-dashed flex items-center ${dark ? 'border-gray-600' : 'border-gray-200'}`}>
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Premium ingredients</span>
-                      </li>
-                      <li className="py-2 flex items-center">
-                        <i className="fas fa-check-circle text-amber-500 mr-3"></i>
-                        <span className={dark ? 'text-gray-300' : 'text-gray-700'}>Monthly themed menus</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className={`p-4 text-center ${dark ? 'bg-amber-900/30' : 'bg-amber-50'}`}>
-                    <p className={`font-semibold ${dark ? 'text-amber-300' : 'text-amber-800'}`}>
-                      <i className="fas fa-truck mr-2"></i>
-                      Free delivery above ₹299
-                    </p>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
             
             {/* Other Slides (Coming Soon) */}
@@ -441,7 +450,7 @@ const MealPlanSubscription = ({ dark = false }) => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                   <div className={`rounded-xl overflow-hidden shadow-lg flex flex-col ${
                     dark ? 'bg-gray-800' : 'bg-white'
                   }`}>
@@ -489,7 +498,7 @@ const MealPlanSubscription = ({ dark = false }) => {
                       </ul>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
