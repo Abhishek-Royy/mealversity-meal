@@ -353,10 +353,10 @@ export default function MealVersityLanding() {
       
       {/* App Pre-registration Popup */}
       {showAppPreregister && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
           <div 
             ref={preregisterFormRef}
-            className={`relative w-full max-w-md p-6 overflow-y-auto ${dark ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-2xl max-h-[90vh]`}
+            className={`relative w-full max-w-md p-4 overflow-y-auto ${dark ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-2xl max-h-[80vh]`}
           >
             <button 
               onClick={() => setShowAppPreregister(false)}
@@ -367,19 +367,19 @@ export default function MealVersityLanding() {
               </svg>
             </button>
             
-            <div className="mb-6 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-amber-400 to-rose-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mb-3 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-gradient-to-r from-amber-400 to-rose-500">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold">Get Early Access</h3>
-              <p className="mt-2 text-gray-500 dark:text-gray-400">Be the first to know when our app launches. Pre-register now for exclusive benefits!</p>
+              <h3 className="text-xl font-bold">Get Early Access</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Pre-register for exclusive app launch benefits!</p>
             </div>
             
-            <form onSubmit={handlePreregisterSubmit} className="space-y-4">
+            <form onSubmit={handlePreregisterSubmit} className="space-y-3">
               <div>
-                <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+                <label htmlFor="name" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                 <input
                   type="text"
                   id="name"
@@ -387,13 +387,13 @@ export default function MealVersityLanding() {
                   value={preregisterFormData.name}
                   onChange={handlePreregisterChange}
                   required
-                  className={`w-full p-3 border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
                   placeholder="Your full name"
                 />
               </div>
               
               <div>
-                <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                <label htmlFor="email" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                 <input
                   type="email"
                   id="email"
@@ -401,20 +401,20 @@ export default function MealVersityLanding() {
                   value={preregisterFormData.email}
                   onChange={handlePreregisterChange}
                   required
-                  className={`w-full p-3 border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
                   placeholder="your.email@example.com"
                 />
               </div>
               
               <div>
-                <label htmlFor="phone" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number (Optional)</label>
+                <label htmlFor="phone" className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300">Phone Number (Optional)</label>
                 <input
                   type="tel"
                   id="phone"
                   name="phone"
                   value={preregisterFormData.phone}
                   onChange={handlePreregisterChange}
-                  className={`w-full p-3 border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
+                  className={`w-full p-2 text-sm border rounded-lg ${dark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300'} focus:outline-none focus:ring-2 focus:ring-amber-500`}
                   placeholder="Your phone number"
                 />
               </div>
@@ -430,22 +430,22 @@ export default function MealVersityLanding() {
                     className="w-4 h-4 border-gray-300 rounded text-amber-500 focus:ring-amber-500"
                   />
                 </div>
-                <div className="ml-3 text-sm">
+                <div className="ml-2 text-xs">
                   <label htmlFor="notifyMe" className="font-medium text-gray-700 dark:text-gray-300">Notify me</label>
-                  <p className="text-gray-500 dark:text-gray-400">Get updates about app launch and exclusive offers.</p>
+                  <p className="text-gray-500 dark:text-gray-400">Get updates about app launch and offers</p>
                 </div>
               </div>
               
-              <div className="pt-2">
+              <div className="pt-1">
                 <button
                   type="submit"
-                  className="w-full py-3 text-white transition duration-300 rounded-lg bg-gradient-to-r from-amber-500 to-rose-500 hover:shadow-lg"
+                  className="w-full py-2 text-sm font-medium text-white transition duration-300 rounded-lg bg-gradient-to-r from-amber-500 to-rose-500 hover:shadow-lg"
                 >
                   Pre-Register Now
                 </button>
               </div>
               
-              <div className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
+              <div className="mt-2 text-[10px] text-center text-gray-500 dark:text-gray-400">
                 By pre-registering, you agree to our Terms of Service and Privacy Policy.
               </div>
             </form>
@@ -457,7 +457,9 @@ export default function MealVersityLanding() {
       <header className="fixed top-0 z-50 w-full mx-auto">
         <nav className={`max-w-8xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between ${dark ? 'bg-gray-800/90 backdrop-blur-md' : 'bg-white/90 backdrop-blur-md'} rounded-lg mx-2 sm:mx-4 md:mx-6 mt-4 shadow-lg`}>
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className="flex items-center justify-center w-10 h-10 font-bold text-white shadow-xl sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500">MV</div>
+            <div className="flex items-center justify-center w-10 h-10  sm:w-12 sm:h-12 rounded-xl overflow-hidden">
+              <img src="/logo.png" alt="MealVersity Logo" className={`w-full h-full object-contain ${dark ? "invert" : ""}`} />
+            </div>
             <div>
               <h1 className="text-base font-extrabold leading-none sm:text-lg">MealVersity</h1>
               <p className="text-xs text-gray-500 dark:text-gray-400">The Smarter Choice</p>
