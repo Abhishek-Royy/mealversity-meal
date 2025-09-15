@@ -24,7 +24,6 @@ export default function MealVersityLanding() {
   const countersRef = useRef(null);
   const preregisterFormRef = useRef(null);
 
-  
   // Career section states
   const [selectedDepartment, setSelectedDepartment] = useState('All');
 
@@ -32,7 +31,7 @@ export default function MealVersityLanding() {
   const toggleDarkMode = useCallback(() => {
     setDark(prevDark => !prevDark);
   }, []);
-  
+
   // Handle app pre-registration form
   const handlePreregisterChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,21 +40,66 @@ export default function MealVersityLanding() {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
-  
-  const handlePreregisterSubmit = (e) => {
+
+  const handlePreregisterSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    alert(`Thank you for pre-registering! We'll notify you when the app launches.`);
-    setShowAppPreregister(false);
-    // Reset form
-    setPreregisterFormData({
-      name: '',
-      email: '',
-      phone: '',
-      notifyMe: true
-    });
+    
+    // Show loading indicator
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Submitting...';
+    
+    try {
+      // Google Sheets API endpoint - using a more reliable deployment URL
+      const apiUrl = "https://script.google.com/macros/s/AKfycbwWap3f_WrvrMZsscXtmZEaRaFWdxEfqeVWvurYAYVe7eIdu7K_Nj1URAarj-lcU2pFGA/exec";
+      
+      // Prepare data with timestamp
+      const dataToSend = {
+        ...preregisterFormData,
+        timestamp: new Date().toISOString(),
+        source: window.location.href
+      };
+      
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: JSON.stringify(dataToSend),
+        headers: {
+          "Content-Type": "application/json"
+        },
+       mode: "no-cors"
+
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (result.status === "success" || result.result === "success") {
+        alert("✅ Thank you for pre-registering! Your data has been saved to our Google Sheet.");
+        
+        // Reset form and close popup on success
+        setShowAppPreregister(false);
+        setPreregisterFormData({
+          name: '',
+          email: '',
+          phone: '',
+          notifyMe: true
+        });
+      } else {
+        throw new Error(result.message || "Unknown error occurred");
+      }
+    } catch (error) {
+      console.error("Error submitting form to Google Sheets:", error);
+      alert(`❌ Failed to submit: ${error.message || "Please check your connection and try again."}`);
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
   };
-  
+
   // Close popup when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -63,13 +107,13 @@ export default function MealVersityLanding() {
         setShowAppPreregister(false);
       }
     }
-    
+
     if (showAppPreregister) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -98,6 +142,10 @@ export default function MealVersityLanding() {
   useEffect(() => {
     heroControls.start({ y: [6, -6, 6], transition: { y: { yoyo: Infinity, duration: 6, ease: 'easeInOut' } } });
   }, [heroControls]);
+
+  // ... rest of your component code (unchanged)
+
+
 
 
 
@@ -319,7 +367,7 @@ export default function MealVersityLanding() {
               </svg>
             </button>
             
-            <div className="text-center mb-6">
+            <div className="mb-6 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-amber-400 to-rose-500">
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -397,7 +445,7 @@ export default function MealVersityLanding() {
                 </button>
               </div>
               
-              <div className="text-xs text-center text-gray-500 dark:text-gray-400 mt-4">
+              <div className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
                 By pre-registering, you agree to our Terms of Service and Privacy Policy.
               </div>
             </form>
@@ -642,9 +690,9 @@ export default function MealVersityLanding() {
 
         {/* TEAM */}
         <section id="team" className="mt-24 mb-16">
-          <div className="text-center mb-12">
-            <h4 className="text-3xl font-bold mb-4">Meet Our Team</h4>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <div className="mb-12 text-center">
+            <h4 className="mb-4 text-3xl font-bold">Meet Our Team</h4>
+            <p className="max-w-2xl mx-auto text-lg text-gray-600">
               The passionate individuals behind MealVersity who are dedicated to bringing healthy, delicious meals to your doorstep.
             </p>
           </div>
@@ -657,14 +705,14 @@ export default function MealVersityLanding() {
                 className={`group overflow-hidden rounded-2xl ${dark ? 'bg-gray-800/80' : 'bg-white/90'} backdrop-blur-md border ${dark ? 'border-gray-700' : 'border-white/30'} shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-2`}
               >
                 {/* Image Section */}
-                <div className="relative overflow-hidden h-64">
+                <div className="relative h-64 overflow-hidden">
                   <img 
                     src={t.image} 
                     alt={t.name} 
-                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110" 
+                    className="object-cover object-center w-full h-full transition-transform duration-500 group-hover:scale-110" 
                     loading="lazy" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div className="absolute inset-0 flex items-end p-4 transition-opacity duration-300 opacity-0 bg-gradient-to-t from-black/70 to-transparent group-hover:opacity-100">
                     <p className={`text-white text-sm mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100`}>
                       {t.bio}
                     </p>
@@ -677,7 +725,7 @@ export default function MealVersityLanding() {
                   <div className={`text-sm ${dark ? 'text-amber-400' : 'text-amber-600'} font-medium mb-3`}>{t.role}</div>
                   
                   {/* Social Media Links */}
-                  <div className="flex items-center space-x-3 mt-4">
+                  <div className="flex items-center mt-4 space-x-3">
                     <a href={t.social.linkedin} target="_blank" rel="noopener noreferrer" className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${dark ? 'bg-gray-700 hover:bg-blue-700 text-gray-300' : 'bg-gray-100 hover:bg-blue-600 text-gray-600 hover:text-white'}`}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-linkedin" viewBox="0 0 16 16">
                         <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
@@ -702,9 +750,9 @@ export default function MealVersityLanding() {
 
         {/* CAREER */}
         <section id="career" className="mt-16">
-          <div className="text-center mb-12">
-            <h4 className="text-3xl font-bold mb-4">Join Our Team</h4>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <div className="mb-12 text-center">
+            <h4 className="mb-4 text-3xl font-bold">Join Our Team</h4>
+            <p className="max-w-2xl mx-auto text-lg text-gray-600">
               We're looking for passionate individuals to help us revolutionize the meal delivery industry. 
               Explore our open positions and be part of our growing team.
             </p>
@@ -754,7 +802,7 @@ export default function MealVersityLanding() {
                       {position.icon}
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-amber-600 transition-colors">
+                      <h5 className="text-lg font-bold text-gray-900 transition-colors dark:text-white group-hover:text-amber-600">
                         {position.title}
                       </h5>
                       <div className="flex items-center gap-2 mt-1">
@@ -766,30 +814,30 @@ export default function MealVersityLanding() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                  <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
                     {position.description}
                   </p>
 
                   {/* Experience */}
                   <div className="mb-4">
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Experience</span>
+                    <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">Experience</span>
                     <p className="text-sm text-gray-700 dark:text-gray-300">{position.experience}</p>
                   </div>
 
                   {/* Requirements */}
                   <div className="mb-6">
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">Key Skills</span>
+                    <span className="block mb-2 text-xs font-medium tracking-wide text-gray-500 uppercase">Key Skills</span>
                     <div className="flex flex-wrap gap-1">
                       {position.requirements.slice(0, 3).map((req, reqIdx) => (
                         <span
                           key={reqIdx}
-                          className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md"
+                          className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-md dark:bg-gray-700 dark:text-gray-300"
                         >
                           {req}
                         </span>
                       ))}
                       {position.requirements.length > 3 && (
-                        <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md">
+                        <span className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-md dark:bg-gray-700 dark:text-gray-300">
                           +{position.requirements.length - 3} more
                         </span>
                       )}
@@ -812,15 +860,15 @@ export default function MealVersityLanding() {
           {/* Call to Action */}
           <div className="mt-12 text-center">
             <div className={`p-8 rounded-2xl ${dark ? 'bg-gray-800/70' : 'bg-gradient-to-r from-amber-50 to-orange-50'} border ${dark ? 'border-gray-700' : 'border-amber-200'}`}>
-              <h5 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h5 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
                 Don't see a position that fits?
               </h5>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
+              <p className="mb-4 text-gray-600 dark:text-gray-300">
                 We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
               </p>
               <button
                 onClick={() => alert('General Application - We\'ll review your profile and contact you!')}
-                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white rounded-xl font-medium hover:shadow-lg transform transition-all duration-200 hover:scale-105"
+                className="px-6 py-3 font-medium text-white transition-all duration-200 transform bg-gradient-to-r from-amber-500 to-rose-500 rounded-xl hover:shadow-lg hover:scale-105"
               >
                 Send General Application
               </button>
@@ -830,20 +878,20 @@ export default function MealVersityLanding() {
 
         {/* CONTACT */}
         <section id="contact" className="mt-20">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold mb-4">Contact Us</h2>
+          <div className="mb-8 text-center">
+            <h2 className="mb-4 text-4xl font-bold">Contact Us</h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">We'd love to hear from you! Reach out to us with any questions or feedback.</p>
           </div>
           
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col gap-8 lg:flex-row">
             {/* Get In Touch */}
             <div className={`flex-1 p-8 rounded-xl shadow-lg ${dark ? 'bg-gray-800' : 'bg-white'} border ${dark ? 'border-gray-700' : 'border-amber-100'}`}>
-              <h3 className="text-2xl font-bold mb-6 border-b-2 border-amber-500 pb-2 inline-block">Get In Touch</h3>
+              <h3 className="inline-block pb-2 mb-6 text-2xl font-bold border-b-2 border-amber-500">Get In Touch</h3>
               
               <div className="space-y-6">
                 <div className="flex items-center">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${dark ? 'bg-gray-700' : 'bg-amber-100'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -856,7 +904,7 @@ export default function MealVersityLanding() {
                 
                 <div className="flex items-center">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${dark ? 'bg-gray-700' : 'bg-amber-100'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                   </div>
@@ -868,7 +916,7 @@ export default function MealVersityLanding() {
                 
                 <div className="flex items-center">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${dark ? 'bg-gray-700' : 'bg-amber-100'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -880,7 +928,7 @@ export default function MealVersityLanding() {
               </div>
               
               <div className="mt-8">
-                <h3 className="text-2xl font-bold mb-6 border-b-2 border-amber-500 pb-2 inline-block">Social Media</h3>
+                <h3 className="inline-block pb-2 mb-6 text-2xl font-bold border-b-2 border-amber-500">Social Media</h3>
                 <p className="mb-4 text-gray-600 dark:text-gray-400">Connect With Us</p>
                 <div className="flex space-x-4">
                   <a href="#" className={`w-12 h-12 rounded-full flex items-center justify-center ${dark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-amber-100 hover:bg-amber-200'} transition-colors duration-300`}>
@@ -904,12 +952,12 @@ export default function MealVersityLanding() {
             
             {/* Send Us a Message */}
             <div className={`flex-1 p-8 rounded-xl shadow-lg ${dark ? 'bg-gray-800' : 'bg-white'} border ${dark ? 'border-gray-700' : 'border-amber-100'}`}>
-              <h3 className="text-2xl font-bold mb-6 border-b-2 border-amber-500 pb-2 inline-block">Send Us a Message</h3>
+              <h3 className="inline-block pb-2 mb-6 text-2xl font-bold border-b-2 border-amber-500">Send Us a Message</h3>
               
               <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert('Message received — we will respond soon'); }}>
                 <div>
                   <label className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     Name
@@ -924,7 +972,7 @@ export default function MealVersityLanding() {
                 
                 <div>
                   <label className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     Email
@@ -939,7 +987,7 @@ export default function MealVersityLanding() {
                 
                 <div>
                   <label className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                     Phone
@@ -954,7 +1002,7 @@ export default function MealVersityLanding() {
                 
                 <div>
                   <label className="flex items-center mb-2 text-gray-700 dark:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
                     Message
@@ -972,7 +1020,7 @@ export default function MealVersityLanding() {
                   className="w-full py-3 px-6 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center"
                 >
                   Send Message
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </button>
@@ -982,20 +1030,20 @@ export default function MealVersityLanding() {
         </section>
 
         {/* App Coming Soon Section */}
-        <section className="mt-20 py-16 px-4">
+        <section className="px-4 py-16 mt-20">
           <div className={`max-w-6xl mx-auto rounded-3xl overflow-hidden shadow-xl ${dark ? 'bg-gray-800' : 'bg-gradient-to-r from-amber-50 to-rose-50'}`}>
-            <div className="flex flex-col lg:flex-row items-center">
+            <div className="flex flex-col items-center lg:flex-row">
               {/* Left Content */}
-              <div className="w-full lg:w-1/2 p-8 lg:p-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">MealVersity App <span className="text-amber-500">Coming Soon</span></h2>
-                <p className="text-lg mb-6 text-gray-600 dark:text-gray-300">
+              <div className="w-full p-8 lg:w-1/2 lg:p-12">
+                <h2 className="mb-4 text-3xl font-bold md:text-4xl">MealVersity App <span className="text-amber-500">Coming Soon</span></h2>
+                <p className="mb-6 text-lg text-gray-600 dark:text-gray-300">
                   Get ready for a seamless meal planning experience! Our mobile app is in the final stages of development.
                 </p>
-                <ul className="space-y-4 mb-8">
+                <ul className="mb-8 space-y-4">
                   {["Easy meal tracking", "Personalized recommendations", "Exclusive app-only discounts", "Real-time delivery updates"].map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 ${dark ? 'bg-amber-500' : 'bg-amber-400'}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
@@ -1005,7 +1053,7 @@ export default function MealVersityLanding() {
                 </ul>
                 <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
                   <button className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-amber-500 to-rose-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                     </svg>
                     Get Notified
@@ -1015,20 +1063,20 @@ export default function MealVersityLanding() {
               </div>
               
               {/* Right Content - App Preview */}
-              <div className="w-full lg:w-1/2 p-8 flex justify-center">
+              <div className="flex justify-center w-full p-8 lg:w-1/2">
                 <div className={`relative w-64 h-96 rounded-3xl overflow-hidden border-8 ${dark ? 'border-gray-700' : 'border-white'} shadow-2xl`}>
-                  <div className="absolute inset-0 bg-gradient-to-b from-amber-400 to-rose-500 flex flex-col items-center justify-center text-white p-6 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-b from-amber-400 to-rose-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    <h3 className="text-xl font-bold mb-2">MealVersity App</h3>
-                    <p className="text-sm mb-6">Your meal planning companion</p>
-                    <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h3 className="mb-2 text-xl font-bold">MealVersity App</h3>
+                    <p className="mb-6 text-sm">Your meal planning companion</p>
+                    <div className="flex items-center justify-center w-12 h-12 border-2 border-white rounded-full animate-pulse">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                     </div>
-                    <p className="text-xs mt-4 opacity-75">Coming 08 Oct, 2025</p>
+                    <p className="mt-4 text-xs opacity-75">Coming 08 Oct, 2025</p>
                   </div>
                 </div>
               </div>
