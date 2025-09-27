@@ -743,7 +743,7 @@ export default function MealVersityLanding() {
       <header className="fixed top-0 z-50 w-full mx-auto">
         <nav className={`max-w-8xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between ${dark ? 'bg-gray-800/90 backdrop-blur-md' : 'bg-white/90 backdrop-blur-md'} rounded-lg mx-2 sm:mx-4 md:mx-6 shadow-lg`}>
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className="flex items-center justify-center w-10 h-10  sm:w-12 sm:h-12 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-center w-10 h-10 overflow-hidden sm:w-12 sm:h-12 rounded-xl">
               <img src="/logo.png" alt="MealVersity Logo" className={`w-full h-full object-contain ${dark ? "invert" : ""}`} />
             </div>
             <div>
@@ -860,78 +860,78 @@ export default function MealVersityLanding() {
                 >
                   <div>
                     <div>
-                      <img src="/hero1.jpeg" alt="meal 1" className="object-cover w-full h-52" loading="lazy" />
+                      <img src="/react5.jpeg" alt="meal 1" className="object-cover w-full h-52" loading="lazy" />
                     </div>
                     <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
                       <h3 className="font-semibold">Chef's Seasonal Veg Thali</h3>
                       <p className="mt-1 text-sm text-gray-600">Wholesome, balanced, and prepared fresh daily.</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹99</div>
+                        <div className="text-lg font-bold">₹X9</div>
                         <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
                   <div>
                     <div>
-                      <img src="/hero2.jpeg" alt="meal 2" className="object-cover w-full h-52" loading="lazy" />
+                      <img src="/hero1.jpeg" alt="meal 2" className="object-cover w-full h-52" loading="lazy" />
                     </div>
                     <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
-                      <h3 className="font-semibold">Protein Power Bowl</h3>
+                      <h3 className="font-semibold">Chef's special chicken thali</h3>
                       <p className="mt-1 text-sm text-gray-600">High-protein meal with fresh vegetables and lean meat.</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹129</div>
+                        <div className="text-lg font-bold">₹X9</div>
                         <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
                   <div>
                     <div>
-                      <img src="/react3.jpeg" alt="meal 3" className="object-cover w-full h-52" loading="lazy" />
+                      <img src="/react4.jpeg" alt="meal 3" className="object-cover w-full h-52" loading="lazy" />
                     </div>
                     <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
-                      <h3 className="font-semibold">Mediterranean Delight</h3>
+                      <h3 className="font-semibold">Chef's special fish thali</h3>
                       <p className="mt-1 text-sm text-gray-600">Inspired by Mediterranean cuisine with fresh herbs and olive oil.</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹149</div>
+                        <div className="text-lg font-bold">₹X9</div>
                         <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
                   <div>
                     <div>
-                      <img src="/react4.jpeg" alt="meal 4" className="object-cover w-full h-52" loading="lazy" />
+                      <img src="/react6.jpeg" alt="meal 5" className="object-cover w-full h-52" loading="lazy" />
                     </div>
                     <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
-                      <h3 className="font-semibold">Asian Fusion Bowl</h3>
-                      <p className="mt-1 text-sm text-gray-600">A perfect blend of Asian flavors with fresh vegetables and tofu.</p>
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹119</div>
-                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div>
-                      <img src="/react5.jpeg" alt="meal 5" className="object-cover w-full h-52" loading="lazy" />
-                    </div>
-                    <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
-                      <h3 className="font-semibold">Hearty Breakfast Platter</h3>
+                      <h3 className="font-semibold">Chef's special egg thali</h3>
                       <p className="mt-1 text-sm text-gray-600">Start your day with a nutritious and filling breakfast option.</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹89</div>
+                        <div className="text-lg font-bold">₹X9</div>
                         <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
                   </div>
                   <div>
                     <div>
-                      <img src="/react6.jpeg" alt="meal 6" className="object-cover w-full h-52" loading="lazy" />
+                      <img src="/cbiriyani.jpg" alt="meal 6" className="object-cover w-full h-52" loading="lazy" />
                     </div>
                     <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
-                      <h3 className="font-semibold">Dessert Special</h3>
-                      <p className="mt-1 text-sm text-gray-600">Indulge in our healthy yet delicious dessert options.</p>
+                      <h3 className="font-semibold">Chef's special chicken briyani</h3>
+                      <p className="mt-1 text-sm text-gray-600">Indulge in our healthy yet delicious chicken biriyani.</p>
                       <div className="flex items-center justify-between mt-3">
-                        <div className="text-lg font-bold">₹79</div>
+                        <div className="text-lg font-bold">₹X9</div>
+                        <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      <img src="/fried_rice.jpeg" alt="meal 6" className="object-cover w-full h-52" loading="lazy" />
+                    </div>
+                    <div className="p-4 bg-gradient-to-b from-white/10 to-white/5">
+                      <h3 className="font-semibold">Chef's special fried rice</h3>
+                      <p className="mt-1 text-sm text-gray-600">Indulge in our healthy yet delicious chicken biriyani.</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="text-lg font-bold">₹X9</div>
                         <button onClick={() => { setPreregisterFormData(prev => ({ ...prev, name: '', email: '', phone: '', notifyMe: true })); setShowAppPreregister(true); }} className="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-amber-500 to-rose-500">Order</button>
                       </div>
                     </div>
